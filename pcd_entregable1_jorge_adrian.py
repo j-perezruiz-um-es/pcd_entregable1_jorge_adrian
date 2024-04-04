@@ -1,10 +1,53 @@
 from enum import Enum
 from abc import ABCMeta, abstractmethod
 
+'''
+Tenemos una clase abstracta Persona de la que heredan las clases Estudiante, ProfesorAsociado e Investigador. La clase persona guarda los atributos comunes
+de todos roles que puede haber en la universidad.
+Nuestra clase MiembroDepartamento es la encargado de guardar los atributos comunes a los roles de docentes, ya sean titulares, asociados o investigadores.
+De esta clase heredan ProfesorAsociado e Investigador, ya que si o si un profesor tambien es miembro de un solo departamento.
+Como un ProfesorTitular tambien es Investigador, los titulares heredan de Investigador.
+Luego hemos creado las clases Asignatura y Estudiante, que nos permitira almacenar ambos objetos.
+Para acabar hemos creado la clase Universidad, en ella estan todas la funciones que nos permiten modificar/ver los objetos que tenemos.
+En todas las clases hemos definido una funcion que nos devuelve los datos, para que cuando queramos hacer un listado de algun objeto,
+desde la funcion de la clase Universidad se haga una llamada a devuelveDatos.
+
+'''
+
 # -----------------------
 # EXCEPCIONES
 # -----------------------
+class ErrorEnDepartamento(Exception):
+    pass
+
 class ErrorEnSexo(Exception):
+    pass
+
+class ErrorEnCaracter(Exception):
+    pass
+
+class ErrorEnAsignatura(Exception):
+    pass
+
+class ErrorEnEstudiante(Exception):
+    pass
+
+class ErrorEnInvestigador(Exception):
+    pass
+
+class ErrorEnProfesorTitular(Exception):
+    pass
+
+class ErrorEnProfesorAsociado(Exception):
+    pass
+
+class ErrorStr(Exception):
+    pass
+
+class ErrorInt(Exception):
+    pass
+
+class ErrorIntFloat(Exception):
     pass
 
 # -----------------------
@@ -28,8 +71,22 @@ class Caracter(Enum):
 # -----------------------
 # CLASES
 # ----------------------- 
+
 class Persona(metaclass=ABCMeta):
     def __init__(self, nombre, dni, direccion, sexo):
+        if not isinstance(nombre, str):
+            print('El nombre debe ser una cadena de caracteres')
+            raise ErrorStr
+        if not isinstance(dni, str):
+            print('El DNI debe ser una cadena de caracteres')
+            raise ErrorStr
+        if not isinstance(direccion, str):
+            print('La dirección debe ser una cadena de caracteres')
+            raise ErrorStr
+        if not isinstance(sexo, Sexo):
+            print('El sexo debe ser una instancia de la clase Sexo')
+            raise ErrorEnSexo
+        
         self.nombre = nombre
         self.dni = dni
         self.direccion = direccion
@@ -41,6 +98,25 @@ class Persona(metaclass=ABCMeta):
     
 class Asignatura:
     def __init__(self, nombre, codigo, caracter, curso, cuatrimestre, creditos):
+        if not isinstance(nombre, str):
+            print('El nombre debe ser una cadena de caracteres')
+            raise ErrorStr
+        if not isinstance(codigo, int):
+            print('El codigo debe ser un numero entero')
+            raise ErrorInt
+        if not isinstance(caracter, Caracter):
+            print('El caracter debe ser una instancia de la clase Caracter')
+            raise ErrorEnCaracter
+        if not isinstance(curso, int):
+            print('El curso debe ser un numero entero')
+            raise ErrorInt
+        if not isinstance(cuatrimestre, int):
+            print('El cuatrimestre debe ser un numero entero')
+            raise ErrorInt
+        if not isinstance(creditos, (int,float)):
+            print('Los creditos deben ser un numero')
+            raise ErrorIntFloat
+
         self.nombre = nombre
         self.codigo = codigo
         self.caracter : Enum = caracter
@@ -59,7 +135,17 @@ class Estudiante(Persona):
     def devuelveDatos(self):
         return "\n\tNombre: "+self.nombre+"\n\tDNI: "+self.dni+"\n\tDireccion: "+self.direccion+"\n\tSexo: "+str(self.sexo.name)
     
+    '''
+    Para poder modificar las asignaturas de cada alumno, definimos las siguientes funciones en
+    esta clase para que a la hora de usar la funciones de la clase universidad, se vean correctamente
+    las asignaturas de cada alumno
+    
+    '''
     def matricularAsignatura(self, asignatura : Asignatura):
+        if not isinstance(asignatura, Asignatura):
+            print('La asignatura debe ser una instancia de la clase Asignatura')
+            raise ErrorEnAsignatura
+        
         for a in self.asignaturas_matriculadas:
             if (a == asignatura):
                 print ("La asignatura "+asignatura.nombre+" ya esta matriculada")
@@ -67,6 +153,10 @@ class Estudiante(Persona):
         self.asignaturas_matriculadas.append(asignatura)
     
     def desmatricularAsignatura(self, asignatura : Asignatura):
+        if not isinstance(asignatura, Asignatura):
+            print('La asignatura debe ser una instancia de la clase Asignatura')
+            raise ErrorEnAsignatura
+        
         for a in self.asignaturas_matriculadas:
             if (a == asignatura):
                 self.asignaturas_matriculadas.remove(a)
@@ -81,10 +171,23 @@ class Estudiante(Persona):
     
 class MiembroDepartamento(Persona):
     def __init__(self, nombre, dni, direccion, sexo, departamento):
+        if not isinstance(departamento, Departamento):
+            print('El departamento debe ser una instancia de la clase Departamento')
+            raise ErrorEnDepartamento
+        
         super().__init__(nombre, dni, direccion, sexo)
         self.departamento : Enum = departamento
         
+    '''
+    La funcion para cambiar a un profesor de departamento la definimos aqui, ya que 
+    como Investigador y ProfesorAsociado las heredan, nos permitira modificarlos.
+    
+    '''
     def cambiarDepartamento(self, departamento):
+        if not isinstance(departamento, Departamento):
+            print('El departamento debe ser una instancia de la clase Departamento')
+            raise ErrorEnDepartamento
+        
         self.departamento = departamento
     
     def devuelveDatos(self):
@@ -92,6 +195,10 @@ class MiembroDepartamento(Persona):
     
 class Investigador(MiembroDepartamento):
     def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion):
+        if not isinstance(area_investigacion, str):
+            print('El area de investigacion debe ser una cadena de caracteres')
+            raise ErrorStr
+        
         super().__init__(nombre, dni, direccion, sexo, departamento)
         self.area_investigacion = area_investigacion
 
@@ -108,10 +215,17 @@ class ProfesorAsociado(MiembroDepartamento):
         
         for asignatura in self.asignaturas_impartidas:
            datos += '\t\t' + asignatura.nombre + '\n'  
-            
         return datos 
     
+    '''
+    Mismo razonamiento que con los estudiantes
+    '''
+    
     def impartirAsignatura(self, asignatura : Asignatura):
+        if not isinstance(asignatura, Asignatura):
+            print('La asignatura debe ser una instancia de la clase Asignatura')
+            raise ErrorEnAsignatura
+        
         for a in self.asignaturas_impartidas:
             if (a == asignatura):
                 print ("La asignatura "+asignatura.nombre+" ya esta impartida")
@@ -119,6 +233,10 @@ class ProfesorAsociado(MiembroDepartamento):
         self.asignaturas_impartidas.append(asignatura)
     
     def quitarAsignatura(self, asignatura : Asignatura):
+        if not isinstance(asignatura, Asignatura):
+            print('La asignatura debe ser una instancia de la clase Asignatura')
+            raise ErrorEnAsignatura
+        
         for a in self.asignaturas_impartidas:
             if (a == asignatura):
                 self.asignaturas_impartidas.remove(a)
@@ -145,6 +263,10 @@ class ProfesorTitular(Investigador):
         return datos
 
     def impartirAsignatura(self, asignatura : Asignatura):
+        if not isinstance(asignatura, Asignatura):
+            print('La asignatura debe ser una instancia de la clase Asignatura')
+            raise ErrorEnAsignatura
+        
         for a in self.asignaturas_impartidas:
             if (a == asignatura):
                 print ("La asignatura "+asignatura.nombre+" ya esta impartida")
@@ -152,6 +274,10 @@ class ProfesorTitular(Investigador):
         self.asignaturas_impartidas.append(asignatura)
     
     def quitarAsignatura(self, asignatura : Asignatura):
+        if not isinstance(asignatura, Asignatura):
+            print('La asignatura debe ser una instancia de la clase Asignatura')
+            raise ErrorEnAsignatura
+        
         for a in self.asignaturas_impartidas:
             if (a == asignatura):
                 self.asignaturas_impartidas.remove(a)
@@ -177,7 +303,23 @@ class Universidad:
         self._investigadores : Investigador = []
         self._miembros : MiembroDepartamento = []
         
+    '''
+    Para cada clase, hemos creado tres funciones:
+        - Para añadir un objeto a la lista
+        - Para eliminar un objeto de la lista
+        - Para listar todos los objetos de la lista
+    
+    En el caso de MiembroDepartamento, como todos los profesores
+    son miembros de departamento, en las mismas funciones de los profesores
+    modificamos las listas de miembroDepartamento.
+    
+    '''
+
     def anadirInvestigador(self, investigador : Investigador):
+        if not isinstance(investigador, Investigador):
+            print('El investigador debe ser una instancia de la clase Investigador')
+            raise ErrorEnInvestigador
+
         for i in self._investigadores:
             if i.dni == investigador.dni:
                 print("El investigador con DNI <"+investigador.dni+"> ya exite")
@@ -186,6 +328,10 @@ class Universidad:
         self._miembros.append(investigador)
         
     def eliminarInvestigador(self, investigador : Investigador):
+        if not isinstance(investigador, Investigador):
+            print('El investigador debe ser una instancia de la clase Investigador')
+            raise ErrorEnInvestigador
+
         for i in self._investigadores:
             if (i.dni == investigador.dni):
                 self._investigadores.remove(i)
@@ -200,6 +346,10 @@ class Universidad:
         print ()
         
     def anadirProfesorTitular(self, profesor : ProfesorTitular):
+        if not isinstance(profesor, ProfesorTitular):
+            print('El profesor titular debe ser una instancia de la clase ProfesorTitular')
+            raise ErrorEnProfesorTitular
+
         for pt in self._titulares:
             if pt.dni == profesor.dni:
                 print("El profesor titular con DNI <"+profesor.dni+"> ya exite")
@@ -208,6 +358,10 @@ class Universidad:
         self._miembros.append(profesor)
         
     def eliminarProfesorTitular(self, profesor : ProfesorTitular):
+        if not isinstance(profesor, ProfesorTitular):
+            print('El profesor titular debe ser una instancia de la clase ProfesorTitular')
+            raise ErrorEnProfesorTitular
+
         for pt in self._titulares:
             if (pt.dni == profesor.dni):
                 self._titulares.remove(pt)
@@ -222,6 +376,10 @@ class Universidad:
         print ()
     
     def anadirProfesorAsociado(self, profesor : ProfesorAsociado):
+        if not isinstance(profesor, ProfesorAsociado):
+            print('El profesor asociado debe ser una instancia de la clase ProfesorAsociado')
+            raise ErrorEnProfesorAsociado
+
         for pa in self._asociados:
             if pa.dni == profesor.dni:
                 print("El profesor asociado con DNI <"+profesor.dni+"> ya exite")
@@ -230,6 +388,10 @@ class Universidad:
         self._miembros.append(profesor)
         
     def eliminarProfesorAsociado(self, profesor : ProfesorAsociado):
+        if not isinstance(profesor, ProfesorAsociado):
+            print('El profesor asociado debe ser una instancia de la clase ProfesorAsociado')
+            raise ErrorEnProfesorAsociado
+
         for pa in self._asociados:
             if (pa.dni == profesor.dni):
                 self._asociados.remove(pa)
@@ -243,7 +405,11 @@ class Universidad:
             print ("\t",pa.devuelveDatos())
         print ()
     
-    def anadirAsignatura(self, asignatura : Asignatura):  
+    def anadirAsignatura(self, asignatura : Asignatura):
+        if not isinstance(asignatura, Asignatura):
+            print('La asignatura debe ser una instancia de la clase Asignatura')
+            raise ErrorEnAsignatura
+        
         for a in self._asignaturas:
             if (a.nombre == asignatura.nombre):
                 print("La asignatura "+asignatura.nombre+" ya existe")
@@ -251,6 +417,10 @@ class Universidad:
         self._asignaturas.append (asignatura)
     
     def eliminarAsignatura(self, asignatura : Asignatura):
+        if not isinstance(asignatura, Asignatura):
+            print('La asignatura debe ser una instancia de la clase Asignatura')
+            raise ErrorEnAsignatura
+        
         for a in self._asignaturas:
             if (a.codigo == asignatura.codigo):
                 self._asignaturas.remove(a)
@@ -264,6 +434,10 @@ class Universidad:
         print ()
 
     def anadirEstudiante(self, estudiante : Estudiante):
+        if not isinstance(estudiante, Estudiante):
+            print('El estudiante debe ser una instancia de la clase Estudiante')
+            raise ErrorEnEstudiante
+
         for e in self._estudiantes:
             if (e.dni == estudiante.dni):
                 print("El estudiante con DNI <"+estudiante.dni+"> ya existe")
@@ -271,6 +445,10 @@ class Universidad:
         self._estudiantes.append (estudiante)
     
     def eliminarEstudiante(self, estudiante : Estudiante):
+        if not isinstance(estudiante, Estudiante):
+            print('El estudiante debe ser una instancia de la clase Estudiante')
+            raise ErrorEnEstudiante
+
         for e in self._estudiantes:
             if (e.dni == estudiante.dni):
                 self._estudiantes.remove(e)
@@ -289,9 +467,7 @@ class Universidad:
             print ("\t",m.devuelveDatos())
         print ()
 
-# no haria falta añadir funciones para añadir y eliminar miembros de departamento ya que 
-# como cada profesor sea del tipo que sea es miembro de departamento, en las funciones de 
-# los profesores, cuando se añaden o eliminan, tambien se hacen en la lista de meimbros de departamentos.
+
 
 # -----------------------
 # SISTEMA DE GESTION
@@ -425,9 +601,3 @@ asociado3.cambiarDepartamento(Departamento.DIIC)
 u.listadoMiembrosDepartamento()
 u.eliminarProfesorAsociado(asociado1)
 u.listadoMiembrosDepartamento()
-
-
-
-
-#####################################
-
