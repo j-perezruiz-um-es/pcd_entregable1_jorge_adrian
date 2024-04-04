@@ -38,8 +38,7 @@ Persona
 -
 DIIC
 DITEC
-DIS</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>54</x><y>102</y><w>330</w><h>138</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>530;10;530;140;10;140;10;210</additional_attributes></element><element><id>UMLClass</id><coordinates><x>624</x><y>48</y><w>168</w><h>132</h></coordinates><panel_attributes>&lt;&lt;abstract&gt;&gt;
-MiembroDepartamento
+DIS</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>54</x><y>102</y><w>330</w><h>138</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>530;10;530;140;10;140;10;210</additional_attributes></element><element><id>UMLClass</id><coordinates><x>624</x><y>48</y><w>168</w><h>132</h></coordinates><panel_attributes>MiembroDepartamento
 -
 +departamento:Departamentos
 
@@ -47,7 +46,6 @@ MiembroDepartamento
 +cambiar_departamento(nuevo_departamento)
 +devuelve_datos()
 </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>474</x><y>282</y><w>78</w><h>60</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>110;10;110;80;10;80;100;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>354</x><y>18</y><w>60</w><h>24</h></coordinates><panel_attributes>/AbstractClass/
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>678</x><y>36</y><w>60</w><h>24</h></coordinates><panel_attributes>/AbstractClass/
 </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>786</x><y>66</y><w>96</w><h>24</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 m1=1
 m2=1..n</panel_attributes><additional_attributes>10;10;140;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>120</x><y>384</y><w>168</w><h>102</h></coordinates><panel_attributes>Asignatura
